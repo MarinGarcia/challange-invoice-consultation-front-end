@@ -75,6 +75,15 @@
       </tr>
     </thead>
     <tbody>
+      @for (invoice of invoices; track invoice.id) {
+        <tr>
+          <th scope="row">{{ invoice.id }}</th>
+          <td>{{ invoice.invoice_number }}</td>
+          <td>{{ invoice.total }}</td>
+          <td>{{ invoice.invoice_date }}</td>
+          <td>{{ invoice.status }}</td>
+        </tr>
+      }
     </tbody>
   </table>
 </div>

@@ -20,6 +20,10 @@ export class InvoiceListComponent {
 	fromDate: NgbDate | null = this.calendar.getToday();
 	toDate: NgbDate | null = this.calendar.getNext(this.calendar.getToday(), 'd', 10);
 
+  invoices: Array<Invoice> = [];
+
+  constructor(private invoiceService: InvoiceService) { }
+
   onDateSelection(date: NgbDate) {
 		if (!this.fromDate && !this.toDate) {
 			this.fromDate = date;
@@ -56,7 +60,28 @@ export class InvoiceListComponent {
 	}
 
   onSearch():void {
-    console.log("from Date: ", this.fromDate);
-    console.log("to Date:", this.toDate);
+    const startDate: Date = new Date(
+      this.fromDate?.year || 0,
+      this.getMonth(this.fromDate?.month || 0),
+      this.fromDate?.day || 0
+    );
+
+    const endDate: Date = new Date(
+      this.toDate?.year || 0,
+      this.getMonth(this.toDate?.month || 0),
+      this.toDate?.day || 0
+    );
+
+    this.invoiceService.getWithRangeDates(startDate, endDate)
+      .subscribe({
+        next: (data) => {
+          this.invoices = data.data;
+        },
+        error: (e) => console.error(e)
+      });
+  }
+
+  private getMonth(month: number): number {
+    return month > 0 ? month - 1 : month
   }
 }

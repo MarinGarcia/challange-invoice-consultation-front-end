@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { InvoiceResponse } from '../interfaces/invoice-response';
 import { environment } from './../../environments/environment';
+import moment from 'moment';
 
 const baseUrl = `${environment.apiURL}api/v1/invoices`;
 
@@ -11,13 +12,16 @@ const baseUrl = `${environment.apiURL}api/v1/invoices`;
 })
 export class InvoiceService {
 
-  constructor(private http: HttpClient, private headers: HttpHeaders) { 
-    this.headers.set('Authorization', `Bearer ${environment.token}`);
+  constructor(private http: HttpClient) {
   }
 
   getWithRangeDates(startDate: Date, endDate: Date): Observable<InvoiceResponse> {
+    const headers= new HttpHeaders().set('Authorization', `Bearer ${environment.token}`)
+    const start: string = moment(startDate).format("YYYY-MM-DD hh:mm:ss");
+    const end: string = moment(endDate).format("YYYY-MM-DD hh:mm:ss");
+
     return this.http.get<InvoiceResponse>(
-      `${baseUrl}?start_date=${startDate}&end_date=${endDate}`,
-      { 'headers': this.headers });
+      `${baseUrl}?start_date=${start}&end_date=${end}`,
+      { 'headers': headers});
   }
 }
