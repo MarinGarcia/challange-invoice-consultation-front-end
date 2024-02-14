@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { NgbCalendar, NgbDate, NgbDateParserFormatter, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { JsonPipe } from '@angular/common';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
@@ -17,6 +18,20 @@ export class AppComponent {
 	hoveredDate: NgbDate | null = null;
 	fromDate: NgbDate | null = this.calendar.getToday();
 	toDate: NgbDate | null = this.calendar.getNext(this.calendar.getToday(), 'd', 10);
+
+  constructor(private http: HttpClient) { }
+
+  ngOnInit() {
+    const headers= new HttpHeaders()
+      .set('content-type', 'application/json')
+      .set('Access-Control-Allow-Origin', '*')
+      .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJuYW1lIjoiQ29udGFMaW5rIn0.52aon-6GGXFyjc_cOG6fOZhY_YMCwiGwvqQZBQ0RJQw');
+    this.http.get<any>('http://localhost:3000/api/v1/invoices', { 'headers': headers }).subscribe({
+      next: (v) => console.log(v),
+      error: (e) => console.error(e),
+      complete: () => console.info('complete') 
+    });
+  }
 
   onDateSelection(date: NgbDate) {
 		if (!this.fromDate && !this.toDate) {
